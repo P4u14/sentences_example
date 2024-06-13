@@ -1,9 +1,12 @@
 package com.sentences.sentences.controller;
 
+import com.sentences.sentences.csv.CSVHelper;
+import com.sentences.sentences.csv.CSVService;
 import com.sentences.sentences.entities.Collection;
 import com.sentences.sentences.repositories.CollectionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
@@ -13,6 +16,9 @@ public class CollectionController {
 
     @Autowired
     private CollectionRepository collectionRepository;
+
+    @Autowired
+    private CSVService csvService;
 
     @GetMapping(path = "/")
     public @ResponseBody Iterable<Collection> getAllCollections() {
@@ -35,6 +41,25 @@ public class CollectionController {
         n.setName(name);
         collectionRepository.save(n);
         return "Saved collection " + name;
+    }
+
+    @PostMapping(path = "/upload")
+    public @ResponseBody String uploadCollection(@RequestParam("file") MultipartFile file) {
+        if (CSVHelper.hasCSVFormat(file)) {
+            try {
+                csvService.save(file);
+                return "Uploaded the file successfully: " + file.getOriginalFilename();
+            } catch (Exception e) {
+                return "Could not upload the file: " + file.getOriginalFilename() + "!" + e.getMessage();
+            }
+        }
+
+
+//        Collection n = new Collection();
+//        n.setName(name);
+//        collectionRepository.save(n);
+//        return "Uploaded collection " + name;
+        return "Please upload a csv file!";
     }
 
     @PutMapping(path = "/update")
