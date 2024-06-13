@@ -1,6 +1,7 @@
 package com.sentences.sentences.controller;
 
 import com.sentences.sentences.entities.Sentence;
+import com.sentences.sentences.repositories.CollectionRepository;
 import com.sentences.sentences.repositories.SentenceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,9 @@ public class SentenceController {
 
     @Autowired
     private SentenceRepository sentenceRepository;
+
+    @Autowired
+    private CollectionRepository collectionRepository;
 
     @GetMapping("/")
     public @ResponseBody  Iterable<Sentence> getAllSentences() {
@@ -32,6 +36,10 @@ public class SentenceController {
 
     @PostMapping(path = "/add")
     public @ResponseBody String addNewSentence(@RequestParam String text, @RequestParam String pronunciation, @RequestParam Integer collectionId) {
+        if (collectionRepository.findById(collectionId).isEmpty()) {
+            return "No collection with id " + collectionId;
+        }
+
         Sentence sentence = new Sentence();
         sentence.setText(text);
         sentence.setPronunciation(pronunciation);
@@ -41,15 +49,25 @@ public class SentenceController {
     }
 
     @PutMapping(path = "/update")
-    public @ResponseBody String updateSentence(@RequestParam Integer id, @RequestParam String text, @RequestParam String pronunciation, @RequestParam Integer collectionId) {
+    public @ResponseBody String updateSentence(@RequestParam Integer id, @RequestParam(required = false) String text, @RequestParam(required = false) String pronunciation, @RequestParam(required = false) Integer collectionId) {
         Optional<Sentence> sentenceOpt = sentenceRepository.findById(id);
         if (sentenceOpt.isEmpty()) {
             return "Sentence with id " + id + " not found";
         }
         Sentence sentence = sentenceOpt.get();
-        sentence.setText(text);
-        sentence.setPronunciation(pronunciation);
-        sentence.setCollectionId(collectionId);
+        if (text != null) {
+            sentence.setText(text);
+        }
+        if (pronunciation != null) {
+            sentence.setPronunciation(pronunciation);
+        }
+        if (collectionId != null) {
+            if (collectionRepository.findById(collectionId).isEmpty()) {
+                return "No collection with id " + collectionId;
+            }
+            sentence.setCollectionId(collectionId);
+        }
+
         sentenceRepository.save(sentence);
         return "Updated";
     }
