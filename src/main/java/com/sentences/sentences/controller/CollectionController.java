@@ -4,7 +4,9 @@ import com.sentences.sentences.csv.CSVHelper;
 import com.sentences.sentences.csv.CSVService;
 import com.sentences.sentences.entities.Collection;
 import com.sentences.sentences.repositories.CollectionRepository;
+import com.sentences.sentences.repositories.SentenceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,6 +18,9 @@ public class CollectionController {
 
     @Autowired
     private CollectionRepository collectionRepository;
+
+    @Autowired
+    private SentenceRepository sentenceRepository;
 
     @Autowired
     private CSVService csvService;
@@ -70,14 +75,22 @@ public class CollectionController {
     }
 
     @DeleteMapping(path = "/deleteAll")
+    @Transactional
     public @ResponseBody String deleteAllCollections() {
+        sentenceRepository.deleteAll();
         collectionRepository.deleteAll();
         return "Deleted All Collections";
     }
 
     @DeleteMapping(path = "/deleteById")
+    @Transactional
     public @ResponseBody String deleteSentenceById(@RequestParam Integer id) {
-        collectionRepository.deleteById(id);
-        return "Deleted Collection with id " + id;
+        try {
+            sentenceRepository.deleteByCollectionId(id);
+            collectionRepository.deleteById(id);
+            return "Deleted Collection with id " + id;
+        } catch (Exception e) {
+            return "Collection with id " + id + " not found" + e.getMessage();
+        }
     }
 }

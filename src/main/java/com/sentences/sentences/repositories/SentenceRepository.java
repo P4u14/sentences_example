@@ -5,4 +5,6 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface SentenceRepository extends CrudRepository<Sentence, Integer> {
     Iterable<Sentence> findByCollectionId(Integer collectionId);
+
+    void deleteByCollectionId(Integer id);
 }
