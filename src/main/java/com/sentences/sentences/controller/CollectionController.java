@@ -54,11 +54,6 @@ public class CollectionController {
             }
         }
 
-
-//        Collection n = new Collection();
-//        n.setName(name);
-//        collectionRepository.save(n);
-//        return "Uploaded collection " + name;
         return "Please upload a csv file!";
     }
 
