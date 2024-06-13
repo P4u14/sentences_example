@@ -49,11 +49,16 @@ public class CollectionController {
     }
 
     @PostMapping(path = "/upload")
-    public @ResponseBody String uploadCollection(@RequestParam("file") MultipartFile file) {
+    public @ResponseBody String uploadCollection(@RequestParam("file") MultipartFile file, @RequestParam(required = false) String name) {
         if (CSVHelper.hasCSVFormat(file)) {
             try {
-                csvService.save(file);
-                return "Uploaded the file successfully: " + file.getOriginalFilename();
+                if (name != null) {
+                    csvService.save(file, name);
+                    return "Uploaded the file successfully: " + name;
+                } else {
+                    csvService.save(file);
+                    return "Uploaded the file successfully: " + file.getOriginalFilename();
+                }
             } catch (Exception e) {
                 return "Could not upload the file: " + file.getOriginalFilename() + "!" + e.getMessage();
             }

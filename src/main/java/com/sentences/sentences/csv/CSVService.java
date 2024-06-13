@@ -21,9 +21,15 @@ public class CSVService {
     private SentenceRepository sentenceRepository;
 
     public void save(MultipartFile file) {
+        save(file, file.getOriginalFilename());
+    }
+
+    public void save(MultipartFile file, String name) {
+        Collection newCollection = new Collection();
+        newCollection.setName(name);
         try {
-            Collection collection = collectionRepository.save(CSVHelper.csvToCollection(file));
-            List<Sentence> sentences = CSVHelper.csvToSentences(file.getInputStream(), collection.getId());
+            Collection savedCollection = collectionRepository.save(newCollection);
+            List<Sentence> sentences = CSVHelper.csvToSentences(file.getInputStream(), savedCollection.getId());
             sentenceRepository.saveAll(sentences);
         } catch (IOException e) {
             throw new RuntimeException("fail to store csv data: " + e.getMessage());

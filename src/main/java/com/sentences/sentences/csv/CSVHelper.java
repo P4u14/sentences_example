@@ -27,12 +27,6 @@ public class CSVHelper {
         return true;
     }
 
-    public static Collection csvToCollection(MultipartFile file) {
-        Collection collection = new Collection();
-        collection.setName(file.getOriginalFilename());
-        return collection;
-    }
-
     public static List<Sentence> csvToSentences(InputStream is, Integer collectionId) {
         try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
              CSVParser csvParser = new CSVParser(fileReader,
