@@ -51,6 +51,3 @@ You can search by id, name, ... as well as update and delete the collections and
 - add authentication
 - verify user input
 - add tests
-- improve response handling (e.g. empty array, null, ...)
-- add error handling
-- add more features (e.g. import csv, update only one field, ...)

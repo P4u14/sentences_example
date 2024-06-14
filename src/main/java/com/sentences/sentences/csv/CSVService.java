@@ -20,13 +20,14 @@ public class CSVService {
     @Autowired
     private SentenceRepository sentenceRepository;
 
-    public void save(MultipartFile file) {
-        save(file, file.getOriginalFilename());
-    }
-
     public void save(MultipartFile file, String name) {
+        if (name == null || name.isEmpty()) {
+            name = file.getOriginalFilename();
+        }
+
         Collection newCollection = new Collection();
         newCollection.setName(name);
+
         try {
             Collection savedCollection = collectionRepository.save(newCollection);
             List<Sentence> sentences = CSVHelper.csvToSentences(file.getInputStream(), savedCollection.getId());
@@ -35,4 +36,5 @@ public class CSVService {
             throw new RuntimeException("fail to store csv data: " + e.getMessage());
         }
     }
+
 }
