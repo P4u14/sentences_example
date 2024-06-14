@@ -23,6 +23,9 @@ public class CSVService {
     public void save(MultipartFile file, String name) {
         if (name == null || name.isEmpty()) {
             name = file.getOriginalFilename();
+            if (name != null && name.toLowerCase().endsWith(".csv")) {
+                name = name.substring(0, name.length() - 4);
+            }
         }
 
         Collection newCollection = new Collection();
