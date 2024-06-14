@@ -37,6 +37,12 @@ For viewing all existing sentences:
 curl --location 'http://localhost:8080/sentences/'
 ```
 
+For uploading a file containing a collection of sentences:
+```bash
+curl --location 'http://localhost:8080/collections/upload' \
+--form 'file=@"/path/to/your/file.csv"'
+```
+
 You can search by id, name, ... as well as update and delete the collections and sentences.
 
 ## Technologies used:
@@ -46,7 +52,7 @@ You can search by id, name, ... as well as update and delete the collections and
 - Docker
 - MySQL
 
-## Make it better:
+## Possible improvements:
 
 - add authentication
 - verify user input
